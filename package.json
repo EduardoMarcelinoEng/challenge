@@ -1,0 +1,15 @@
+{
+  "name": "convert-csv-for-json",
+  "version": "1.0.0",
+  "description": "Sistema que converte arquivo .csv para .json",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eduardo Marcelino",
+  "license": "ISC",
+  "dependencies": {
+    "json-format": "^1.0.1"
+  }
+}
