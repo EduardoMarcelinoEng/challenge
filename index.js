@@ -54,6 +54,31 @@ const getAddresses = (type, str)=>{
     }
 }
 
+const mergeLines = (linesArr)=>{
+    
+    let eids = [...new Set(linesArr.map(line=>line.eid))];
+
+    return eids.map(eid=>{
+        return linesArr
+            .filter(line=>line.eid === eid)
+            .reduce((acc, current)=>{
+                let newObj = {};
+                Object
+                    .entries(current)
+                    .forEach(entry=>{
+                        if(typeof entry[1] === 'object'){
+                            let beforeArr = acc[entry[0]] ? acc[entry[0]] : [];
+                            newObj[entry[0]] = [...new Set([...beforeArr, ...entry[1]])];
+                            return false;
+                        }
+                        newObj[entry[0]] = entry[1]
+                    });
+                return Object.assign(acc, newObj);
+            }, {});
+    });
+
+}
+
 const generateJSON = (header, values)=>{
 
     let newArr = [];
@@ -97,7 +122,7 @@ const generateJSON = (header, values)=>{
         newArr.push(obj);
     });
 
-    return newArr;
+    return mergeLines(newArr);
 
 }
 
