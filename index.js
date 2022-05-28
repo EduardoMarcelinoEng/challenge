@@ -4,6 +4,8 @@ const { exit } = require('process');
 const csvFilePath = 'input.csv';
 const jsonFilePath = 'output.json';
 
+/*Verifica se existe arquivo csv. Caso não exista, exibe mensagem informando.
+Caso contrário, dá prosseguimento*/
 if(!existsSync(csvFilePath)) {
     console.log('Arquivo input.csv não encontrado na raiz do projeto. Forneça o arquivo para conversão.');
     exit();
@@ -16,14 +18,17 @@ const headerCsv = linesCsv[0];
 let valuesCsv = linesCsv;
 valuesCsv.shift();
 
+//Verifica se string possui address, e retorna, caso exista
 const isAddress = (str)=>{
     return str.search(/\s/) >= 0 ? str.split(' ') : false;
 }
 
+//Verifica se string possui grupo, caso exista, retorna
 const getGroups = (str)=>{
     return str.match(/Sala \d|Turma \d|Noturno|Diurno/g);
 }
 
+//Cria uma estrutura para armazenar valores do addresses, de acordo com header
 const formatAddresses = (addressesArr)=>{
 
     return addressesArr.map(str=>{
@@ -40,10 +45,12 @@ const formatAddresses = (addressesArr)=>{
 
 }
 
+//Formata telefones no padrão esperado. Ex.: 5521987654321
 const formatPhones = (phonesArr)=>{
     return phonesArr.map(phone=>`55${phone.replace(/\D/g, '')}`);
 }
 
+//Encontra addresses
 const getAddresses = (type, str)=>{
     if(type === 'email') return str.match(/\w+.?\w+@\w+.com/g);
     if(type === 'phone'){
@@ -54,6 +61,7 @@ const getAddresses = (type, str)=>{
     }
 }
 
+//Procura por linhas que possuem mesmo eid e mescla
 const mergeLines = (linesArr)=>{
     
     let eids = [...new Set(linesArr.map(line=>line.eid))];
@@ -79,6 +87,7 @@ const mergeLines = (linesArr)=>{
 
 }
 
+//Gera json formatado com os valores do csv
 const generateJSON = (header, values)=>{
 
     let newArr = [];
@@ -88,7 +97,7 @@ const generateJSON = (header, values)=>{
         return str.replace(/"((Turma|Sala) \d)\s*,\s*((Turma|Sala) \d)"/gi, "$1/$3").split(',');
     });
 
-    valuesArr.forEach((arr, line)=>{
+    valuesArr.forEach(arr=>{
         let obj = {};
         obj.fullname = '';
         obj.eid = '';
@@ -126,4 +135,5 @@ const generateJSON = (header, values)=>{
 
 }
 
+//Cria arquivo final com o json
 writeFileSync(jsonFilePath, jsonFormat(generateJSON(headerCsv, valuesCsv)));
